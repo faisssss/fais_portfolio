@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+/* Design tokens. Colours follow GitHub's dark theme so the code panels read like a real editor. */
+@theme {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-bg: #07090d;
+  --color-surface: #0d1117;
+  --color-elevated: #161b22;
+  --color-line: rgb(240 246 252 / 0.1);
+  --color-line-strong: rgb(240 246 252 / 0.18);
+  --color-fg: #e6edf3;
+  --color-muted: #8b949e;
+  --color-subtle: #7d8590;
+
+  --color-accent: #7ee787;
+  --color-accent-strong: #3fb950;
+
+  /* Syntax colours, used only inside code-styled UI */
+  --color-keyword: #ff7b72;
+  --color-string: #a5d6ff;
+  --color-fn: #d2a8ff;
+  --color-number: #79c0ff;
+  --color-prop: #ffa657;
+  --color-comment: #8b949e;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scrollbar-color: #30363d var(--color-bg);
+    scrollbar-width: thin;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: rgb(126 231 135 / 0.28);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Sections receive focus after in-page navigation; they are not interactive, so no ring. */
+  [tabindex='-1']:focus {
+    outline: none;
+  }
+}
+
+/* Faint dot grid used behind a few sections */
+@utility bg-dot-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgb(240 246 252 / 0.07) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+/* Text that fades out at the edges of horizontal strips */
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
