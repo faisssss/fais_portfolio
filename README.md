@@ -1,97 +1,80 @@
-# Mohammed Faisal — portfolio
+# Shefin Shafi — portfolio
 
-A one-page portfolio site built from the resume, with a light "code editor" theme: file-name tabs, a
-`git log` timeline, a terminal contact block and an editor status bar. Animations use
-[GSAP](https://gsap.com), smooth scrolling uses [Lenis](https://github.com/darkroomengineering/lenis),
-and several effects come from [React Bits](https://reactbits.dev).
+Photography and video-editing portfolio with a built-in admin panel at **`/admin`**, where Shefin can
+change everything without touching code: photos, films, Instagram reels, services, every heading and
+piece of text, and which sections appear (and in what order).
+
+Until the admin panel is connected, the site shows **sample content**: photos from Lorem Picsum,
+the Blender Foundation's freely licensed open movies as films, and links to well-known photographers'
+Instagram profiles as reels. A small "Sample photos & videos" notice shows while it does. None of it is
+Shefin's work; it disappears as soon as he publishes his own.
 
 ## Run it
 
 ```bash
 npm install
-npm run dev       # local dev server
+npm run dev       # local dev server → http://localhost:5173 (admin: /admin)
 npm run build     # typecheck + production build into dist/
 npm run preview   # serve the production build
-npm run lint      # oxlint
+npm run lint
 ```
 
-The build is static and uses relative asset paths, so `dist/` can be hosted anywhere
-(GitHub Pages, Netlify, Vercel, a sub-folder).
+On Windows PowerShell, use `npm.cmd` instead of `npm` if scripts are blocked.
 
-## Editing the content
+## Connect the admin panel (one time, ~5 minutes)
 
-Everything the site says lives in [`src/data/resume.ts`](src/data/resume.ts): profile, contact links,
-skills, the journey timeline and projects. Components only read from that file.
+The admin panel is [Sanity Studio](https://www.sanity.io), embedded in the site. Content and photos are
+stored on Sanity's free plan; login is with Google or email, handled by Sanity.
 
-- **Project links**: add `links: [{ label: 'GitHub', href: '…' }]` to a project and the card shows them.
-- **Resume download**: put the PDF in `public/` and set `profile.resumeUrl` (e.g. `'./resume.pdf'`).
-  It's off by default because the PDF includes a phone number.
+1. **Create the project.** Sign up at [sanity.io](https://www.sanity.io), go to
+   [sanity.io/manage](https://www.sanity.io/manage) → **Create new project**. Keep the dataset named
+   `production` and **public** (the site reads published content without a login). Copy the **Project ID**.
+2. **Allow the site to talk to it.** In the project: **API → CORS origins → Add origin**, and add each
+   address the site runs on, with **Allow credentials** ticked:
+   `http://localhost:5173` and your live address (e.g. `https://shefin.vercel.app`).
+3. **Give the site the project ID.**
+   - Locally: copy `.env.example` to `.env` and fill in `VITE_SANITY_PROJECT_ID`.
+   - On Vercel: Project → **Settings → Environment Variables** → add `VITE_SANITY_PROJECT_ID`, then redeploy.
+4. **Invite Shefin.** In sanity.io/manage → **Members → Invite**, using his email, with the
+   *Administrator* or *Editor* role.
+5. **First edit.** Open `/admin`, log in, click **Portfolio**. It starts pre-filled with the sample text and
+   video links. Upload photos, replace the links, then press **Publish**. The live site switches from the
+   samples to his content right away (no redeploy needed).
 
-## How the libraries are used
+### What Shefin can do in `/admin`
 
-**Lenis** — [`src/providers/SmoothScroll.tsx`](src/providers/SmoothScroll.tsx)
-`ReactLenis` wraps the app with `autoRaf: false`; GSAP's ticker calls `lenis.raf()`,
-`ScrollTrigger.update` runs on every Lenis scroll (`useLenis`), and `lagSmoothing(0)` keeps them in step.
-Navigation scrolls with `lenis.scrollTo()` and then moves focus to the section
-([`useScrollTo`](src/hooks/useScrollTo.ts)). The mobile menu and the boot intro pause Lenis while open.
-Lenis's `respectReducedMotion` turns smoothing off for reduced-motion users.
+- **Name & intro:** name, title, city, intro sentence, showreel link (YouTube/Vimeo) and its cover image.
+- **Sections:** add, remove and drag to reorder: *Photo gallery*, *Films*, *Instagram reels*, *Services*,
+  *About*, *Heading & text*, *Contact*. Each has its own heading, intro line and menu label.
+- **Photos:** drag images in; each can have a category (becomes a filter button), caption and description.
+  Sanity resizes them automatically, so full-size camera files are fine.
+- **Videos:** paste a YouTube, Vimeo or Instagram reel link; the site works out which it is. Instagram reels
+  must be public, and a cover image is recommended (Instagram doesn't provide one).
+- **Contact & social:** email, WhatsApp number, Instagram / YouTube / Vimeo links.
 
-**GSAP** — plugins are registered once in [`src/lib/gsap.ts`](src/lib/gsap.ts)
-(ScrollTrigger, SplitText, TextPlugin, `useGSAP`). Every component animates through `useGSAP` with a
-`scope` ref, and motion is gated with `gsap.matchMedia()` so reduced-motion users get a static page.
-Highlights:
+## Deploy
 
-- Boot intro: a single timeline with labels; any key or click fast-forwards it.
-- Hero: staggered reveal after the intro, plus a scrubbed scroll-out.
-- About: the editor window tilts into place (scrub), code lines type in, quick facts count up.
-- Journey: the branch line is a scrubbed `scaleY`, each commit has its own timeline.
-- Projects: a pinned horizontal scroll on desktop. The track tween is also the `containerAnimation`
-  for each card's entrance. Phones and tablets get a normal vertical list instead.
-- Contact: TextPlugin types `./contact.sh`, then the output prints line by line.
-- Nav: ScrollTrigger tracks the active section; the tab marker slides with `x` + `scaleX`.
+Import the repo on [Vercel](https://vercel.com) (framework preset: **Vite**, build `npm run build`,
+output `dist`). `vercel.json` routes `/admin` to the app. Add the environment variable from step 3 above.
 
-Only `transform` and `opacity` are animated.
+## How it's built
 
-**React Bits** — copied into [`src/components/reactbits/`](src/components/reactbits) (TypeScript +
-Tailwind versions) and adapted to the site:
+React + TypeScript + Tailwind CSS v4, built with Vite.
 
-| Component | Used for | Adaptations |
-|-----------|----------|-------------|
-| FaultyTerminal | hero background | canvas created per mount (fixes a blank WebGL context under StrictMode) |
-| DecryptedText | hero name | plain `span` instead of `motion.span` (drops the motion dependency) |
-| TextType | typed roles | uses the shared GSAP instance |
-| SplitText | section headings | `id` prop for `aria-labelledby` |
-| ScrollReveal | about paragraph | `useGSAP`, configurable tag (was always `h2`), screen-reader copy |
-| CountUp | quick facts | GSAP tween + ScrollTrigger instead of motion's `animate`/`useInView` |
-| SpotlightCard | skills, projects | theme tokens; radius/padding left to the caller |
-| LogoLoop | tech strip | — (uses its scroll-velocity boost) |
-| AnimatedContent | staggered card reveals | `useGSAP` instead of a manual `gsap.context` |
-| Magnet | call-to-action buttons | — |
-| ClickSpark | click feedback | — |
-| StaggeredMenu | mobile navigation | `useGSAP` + `contextSafe`, dark theme, `inert` when closed, Escape/focus handling, Lenis-aware navigation |
+- **Lenis** ([`src/providers/SmoothScroll.tsx`](src/providers/SmoothScroll.tsx)): smooth scrolling driven by
+  GSAP's ticker (`autoRaf: false`), synced to ScrollTrigger. It pauses while the menu, the photo lightbox or
+  the video player is open, and honours reduced-motion settings.
+- **GSAP** ([`src/lib/gsap.ts`](src/lib/gsap.ts) registers ScrollTrigger and SplitText once): all animation
+  runs through `useGSAP` with scoped refs and `gsap.matchMedia()` for reduced motion and screen size.
+  - Hero: the name rises in letter by letter, and scrolling pushes into the silent showreel.
+  - Films: pinned horizontal scroll on large screens, with cards settling in via `containerAnimation`.
+  - Also: reels slide in, the portrait drifts (parallax), the header hides while scrolling down, and a "View/Play" cursor follows the pointer.
+- **React Bits** ([`src/components/reactbits/`](src/components/reactbits)), adapted to the site:
+  **Masonry** (photo grid, hover zoom, lightbox, animated filtering), **SplitText** (section headings),
+  **ScrollReveal** (intro sentence), **AnimatedContent** (services), **Magnet** (buttons) and
+  **StaggeredMenu** (mobile menu). React Bits is MIT + Commons Clause; its licence is in that folder.
 
-React Bits is MIT + Commons Clause; its licence is kept in
-[`src/components/reactbits/LICENSE.md`](src/components/reactbits/LICENSE.md).
-
-## Accessibility
-
-Skip link, landmark elements, one `h1`, and `aria-labelledby` on each section.
-Animated text keeps a plain screen-reader copy. Reveals that contain links fade with `opacity`
-rather than `visibility`, so they stay reachable by keyboard before they've animated in.
-With `prefers-reduced-motion` the page renders fully without the intro, pinning or scroll effects.
-
-## Project layout
-
-```
-src/
-  data/resume.ts            all content
-  lib/gsap.ts               plugin registration + shared media queries
-  providers/                Lenis smooth scroll, intro state
-  hooks/                    useScrollTo, useMediaQuery
-  components/
-    layout/                 boot intro, desktop tabs, mobile menu, status bar
-    sections/               hero, about, skills, journey, projects, contact
-    ui/                     editor window, section heading, icons, shared classes
-    reactbits/              adapted React Bits components
-docs/superpowers/specs/     design spec
-```
+Content flows through one shape ([`src/content/types.ts`](src/content/types.ts)): Sanity data is fetched
+with a single GROQ query ([`src/content/load.ts`](src/content/load.ts)) and falls back to the samples in
+[`src/content/sample.ts`](src/content/sample.ts). The admin fields are defined in
+[`src/admin/schema.ts`](src/admin/schema.ts). The public site never downloads the admin code.

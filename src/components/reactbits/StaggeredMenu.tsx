@@ -8,6 +8,7 @@
  *  - Dark theme driven by the site's CSS tokens; smaller, responsive type.
  *  - Accessibility: the closed panel is `inert`, Escape closes, focus moves into the panel and back.
  *  - `onItemSelect` lets the parent handle navigation (smooth scroll with Lenis) instead of a hash jump.
+ *  - The full-screen wrapper ignores taps (only the bar and open panel take them); it used to block the page.
  */
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
@@ -355,7 +356,7 @@ export const StaggeredMenu = ({
   return (
     <div
       ref={scopeRef}
-      className={`sm-scope z-40 ${isFixed ? 'fixed top-0 left-0 h-dvh w-full overflow-hidden' : 'h-full w-full'}`}
+      className={`sm-scope pointer-events-none z-40 ${isFixed ? 'fixed top-0 left-0 h-dvh w-full overflow-hidden' : 'h-full w-full'}`}
     >
       <div
         className={(className ? className + ' ' : '') + 'staggered-menu-wrapper pointer-events-none relative z-40 h-full w-full'}
@@ -447,19 +448,19 @@ export const StaggeredMenu = ({
 
       <style>{`
 .sm-scope .staggered-menu-header { padding: 0.75rem 1.25rem; min-height: 3.5rem; background: color-mix(in srgb, var(--color-bg) 78%, transparent); border-bottom: 1px solid var(--color-line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.sm-scope .sm-toggle { color: var(--color-fg); font-family: var(--font-mono); font-size: 0.875rem; font-weight: 500; padding: 0.5rem 0.25rem; }
+.sm-scope .sm-toggle { color: var(--color-fg); font-size: 0.875rem; font-weight: 500; padding: 0.5rem 0.25rem; }
 .sm-scope .sm-toggle-textWrap { margin-right: 0.5em; }
 .sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
 .sm-scope .staggered-menu-panel { width: clamp(260px, 38vw, 420px); background: var(--color-surface); padding: 6rem 1.5rem 2rem; }
 .sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
 .sm-scope .sm-prelayers { width: clamp(260px, 38vw, 420px); }
 .sm-scope [data-position='left'] .sm-prelayers { right: auto; left: 0; }
-.sm-scope .sm-panel-item { color: var(--color-fg); font-weight: 600; font-size: clamp(2.25rem, 11vw, 3.25rem); line-height: 1.05; letter-spacing: -0.03em; padding-right: 1.6em; transition: color 0.25s; }
+.sm-scope .sm-panel-item { color: var(--color-fg); font-family: var(--font-serif); font-weight: 400; font-size: clamp(2.75rem, 13vw, 4rem); line-height: 1.02; letter-spacing: -0.01em; padding-right: 1.6em; transition: color 0.25s; }
 .sm-scope .sm-panel-itemLabel { will-change: transform; transform-origin: 50% 100%; }
 .sm-scope .sm-panel-item:hover, .sm-scope .sm-panel-item:focus-visible { color: var(--sm-accent); }
 .sm-scope .sm-panel-list[data-numbering] { counter-reset: smItem; }
-.sm-scope .sm-panel-list[data-numbering] .sm-panel-item::after { counter-increment: smItem; content: counter(smItem, decimal-leading-zero); position: absolute; top: 0.2em; right: 0.4em; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 400; letter-spacing: 0; color: var(--sm-accent); pointer-events: none; user-select: none; opacity: var(--sm-num-opacity, 0); }
-.sm-scope .sm-socials-title { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500; color: var(--sm-accent); text-transform: lowercase; }
+.sm-scope .sm-panel-list[data-numbering] .sm-panel-item::after { counter-increment: smItem; content: counter(smItem, decimal-leading-zero); position: absolute; top: 0.2em; right: 0.4em; font-family: var(--font-sans); font-size: 0.8rem; font-weight: 400; letter-spacing: 0; color: var(--sm-accent); pointer-events: none; user-select: none; opacity: var(--sm-num-opacity, 0); }
+.sm-scope .sm-socials-title { font-size: 0.8rem; font-weight: 500; color: var(--sm-accent); text-transform: lowercase; }
 .sm-scope .sm-socials-link { font-size: 1.05rem; font-weight: 500; color: var(--color-muted); padding: 2px 0; transition: color 0.3s ease, opacity 0.3s ease; }
 .sm-scope .sm-socials-link:hover, .sm-scope .sm-socials-link:focus-visible { color: var(--sm-accent); }
 @media (max-width: 1024px) { .sm-scope .staggered-menu-panel, .sm-scope .sm-prelayers { width: 100%; left: 0; right: 0; } }
