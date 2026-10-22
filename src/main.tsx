@@ -1,15 +1,14 @@
-import '@fontsource-variable/geist'
-import '@fontsource-variable/jetbrains-mono'
-import 'lenis/dist/lenis.css'
-import './index.css'
-import './lib/gsap'
-
-import { StrictMode } from 'react'
+import { lazy, StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
+
+// /admin loads the Sanity editor; everything else is the public site. Each is its own bundle.
+const isAdmin = window.location.pathname.replace(/\/+$/, '').startsWith('/admin')
+const Root = isAdmin ? lazy(() => import('./admin/AdminApp')) : lazy(() => import('./site/SiteApp'))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Suspense fallback={null}>
+      <Root />
+    </Suspense>
   </StrictMode>,
 )

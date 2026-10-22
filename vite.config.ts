@@ -4,20 +4,11 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // Relative asset paths so the build works from any host path (GitHub Pages, a sub-folder, etc.)
-  base: './',
+  // Absolute paths: the /admin route must still find /assets/… when loaded directly.
+  base: '/',
   plugins: [react(), tailwindcss()],
   build: {
-    rolldownOptions: {
-      output: {
-        // Long-lived vendor chunks cache separately from the site's own code.
-        codeSplitting: {
-          groups: [
-            { name: 'react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
-            { name: 'animation', test: /node_modules[\\/](gsap|@gsap|lenis)[\\/]/ },
-          ],
-        },
-      },
-    },
+    // The /admin editor (Sanity Studio) is large by nature; it loads only on /admin, never on the public site.
+    chunkSizeWarningLimit: 4000,
   },
 })

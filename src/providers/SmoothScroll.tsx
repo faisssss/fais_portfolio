@@ -21,14 +21,27 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     gsap.ticker.add(update)
     gsap.ticker.lagSmoothing(0)
 
-    // Web fonts change line heights after first paint; recalculate trigger positions once they're in.
+    // Web fonts and late layout (content loading, the masonry grid sizing itself) change the page height
+    // after ScrollTriggers are created; recalculate their positions whenever it changes.
     let cancelled = false
     document.fonts?.ready.then(() => {
       if (!cancelled) ScrollTrigger.refresh()
     })
+    let timer = 0
+    let lastHeight = document.body.scrollHeight
+    const observer = new ResizeObserver(() => {
+      const height = document.body.scrollHeight
+      if (Math.abs(height - lastHeight) < 2) return
+      lastHeight = height
+      window.clearTimeout(timer)
+      timer = window.setTimeout(() => ScrollTrigger.refresh(), 150)
+    })
+    observer.observe(document.body)
 
     return () => {
       cancelled = true
+      observer.disconnect()
+      window.clearTimeout(timer)
       gsap.ticker.remove(update)
       gsap.ticker.lagSmoothing(500, 33)
     }
