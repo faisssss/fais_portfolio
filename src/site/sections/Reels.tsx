@@ -74,8 +74,13 @@ export function Reels({ id, heading, intro, reels }: ReelsProps) {
           const body = (
             <>
               <span className="absolute inset-0 bg-elevated">
-                {reel.cover && (
+                {reel.cover ? (
                   <img onError={hideOnError} src={reel.cover} alt="" loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                ) : (
+                  // Instagram doesn't share cover images, so reels without an uploaded cover get a branded card.
+                  <span className="grid size-full place-items-center bg-[radial-gradient(120%_80%_at_20%_10%,rgb(224_164_88/0.45),transparent_60%),linear-gradient(160deg,#2a1f14,#0c0c0b)]">
+                    <TbBrandInstagram aria-hidden="true" className="size-24 opacity-15" />
+                  </span>
                 )}
               </span>
               <span className="absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.35),transparent_30%,transparent_55%,rgb(0_0_0/0.75))]" />

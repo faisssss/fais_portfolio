@@ -53,9 +53,10 @@ export async function loadPortfolio(): Promise<Portfolio> {
   if (!isSanityConfigured()) return samplePortfolio
   try {
     // Sanity's read API over plain fetch (the full client library would add ~80 KB to the public site).
+    // The live API (not the apicdn cache) so a Publish shows up on the next refresh, every time.
     const { projectId, dataset, apiVersion } = sanityConfig
     const params = new URLSearchParams({ query: QUERY, $id: JSON.stringify(PORTFOLIO_ID), perspective: 'published' })
-    const response = await fetch(`https://${projectId}.apicdn.sanity.io/v${apiVersion}/data/query/${dataset}?${params}`)
+    const response = await fetch(`https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?${params}`, { cache: 'no-store' })
     if (!response.ok) throw new Error(`Sanity responded ${response.status}`)
     const raw = ((await response.json()) as { result: Raw | null }).result
     if (!raw?.name) return samplePortfolio
