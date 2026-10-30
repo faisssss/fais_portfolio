@@ -108,7 +108,7 @@ const reels = defineType({
               validation: (rule) =>
                 rule.required().custom((value: unknown) =>
                   typeof value === 'string' && !isInstagramReel(value)
-                    ? 'This must be a link to one reel (it contains /reel/), not a profile link'
+                    ? 'This must be a link to one reel or post (it contains /reel/ or /p/), not a profile link'
                     : true,
                 ),
             }),
@@ -117,7 +117,7 @@ const reels = defineType({
               title: 'Cover image',
               type: 'image',
               description: 'Instagram doesn’t share reel thumbnails, so upload a still or screenshot from the reel.',
-              validation: (rule) => rule.required(),
+              validation: (rule) => rule.required().warning('Add a cover so the card shows a picture instead of a plain placeholder'),
             }),
           ],
           preview: { select: { title: 'title', subtitle: 'url', media: 'cover' } },

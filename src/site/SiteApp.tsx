@@ -97,7 +97,7 @@ function Site({ data }: { data: Portfolio }) {
         cursorColor="#f2efe9"
         size={30}
         cornerSize={10}
-        thickness={1.5}
+        thickness={2.5}
         padding={8}
         dotSize={5}
         spinDuration={6}

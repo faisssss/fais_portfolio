@@ -64,8 +64,11 @@ const sections: Section[] = [
     heading: 'Reels',
     navLabel: 'Reels',
     intro: 'Short vertical edits made for Instagram.',
-    // Reels must be links to real public reels; add them in /admin (with a cover image each).
-    reels: [],
+    reels: [
+      { title: 'Sample reel 1', url: 'https://www.instagram.com/reel/DeeAUoQOuHL/', cover: 'https://picsum.photos/id/1011/720/1280' },
+      { title: 'Sample reel 2', url: 'https://www.instagram.com/reel/Deg6mHHsoAp/', cover: 'https://picsum.photos/id/1041/720/1280' },
+      { title: 'Sample reel 3', url: 'https://www.instagram.com/p/DfDaC-qM5Iu/', cover: 'https://picsum.photos/id/1053/720/1280' },
+    ],
   },
   {
     _key: 'services',
