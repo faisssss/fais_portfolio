@@ -64,13 +64,8 @@ const sections: Section[] = [
     heading: 'Reels',
     navLabel: 'Reels',
     intro: 'Short vertical edits made for Instagram.',
-    reels: [
-      { title: 'Sample · @natgeo', url: 'https://www.instagram.com/natgeo/', cover: 'https://picsum.photos/id/1011/720/1280' },
-      { title: 'Sample · @chrisburkard', url: 'https://www.instagram.com/chrisburkard/', cover: 'https://picsum.photos/id/1041/720/1280' },
-      { title: 'Sample · @petermckinnon', url: 'https://www.instagram.com/petermckinnon/', cover: 'https://picsum.photos/id/1053/720/1280' },
-      { title: 'Sample · @jimmy_chin', url: 'https://www.instagram.com/jimmy_chin/', cover: 'https://picsum.photos/id/1022/720/1280' },
-      { title: 'Sample · @brandonwoelfel', url: 'https://www.instagram.com/brandonwoelfel/', cover: 'https://picsum.photos/id/1068/720/1280' },
-    ],
+    // Reels must be links to real public reels; add them in /admin (with a cover image each).
+    reels: [],
   },
   {
     _key: 'services',
@@ -107,6 +102,7 @@ export const samplePortfolio: Portfolio = {
   statement:
     'I photograph people and places, and cut footage into stories that feel like they were always meant to be told that way.',
   heroVideo: 'https://www.youtube.com/watch?v=R6MlUcmOul8',
+  heroStart: 45,
   heroPoster: 'https://picsum.photos/id/1036/1920/1080',
   email: 'shefin@example.com',
   sections,

@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { loadPortfolio } from '../content/load'
 import type { Portfolio, Section } from '../content/types'
 import { SmoothScroll } from '../providers/SmoothScroll'
-import { Cursor } from './Cursor'
+import TargetCursor from '../components/reactbits/TargetCursor'
 import { Footer } from './Footer'
 import { Header, type NavLink } from './Header'
 import { About } from './sections/About'
@@ -45,8 +45,24 @@ function renderSection(section: Section, id: string, data: Portfolio) {
   }
 }
 
+/** Sections with nothing to show (an empty gallery, no reels yet) are left out, menu link included. */
+function hasContent(section: Section) {
+  switch (section._type) {
+    case 'gallery':
+      return section.photos.length > 0
+    case 'films':
+      return section.films.length > 0
+    case 'reels':
+      return section.reels.length > 0
+    case 'services':
+      return section.services.length > 0
+    default:
+      return true
+  }
+}
+
 function Site({ data }: { data: Portfolio }) {
-  const placed = data.sections.map((section) => ({ section, id: sectionId(section.navLabel || section.heading, section._key) }))
+  const placed = data.sections.filter(hasContent).map((section) => ({ section, id: sectionId(section.navLabel || section.heading, section._key) }))
   const links: NavLink[] = placed
     .filter(({ section }) => section.navLabel && section._type !== 'contact')
     .map(({ section, id }) => ({ id, label: section.navLabel! }))
@@ -76,7 +92,17 @@ function Site({ data }: { data: Portfolio }) {
         ))}
       </main>
       <Footer data={data} />
-      <Cursor />
+      <TargetCursor
+        targetSelector="[data-cursor-label], [data-cursor-group] [role='listitem']"
+        cursorColor="#f2efe9"
+        size={30}
+        cornerSize={10}
+        thickness={1.5}
+        padding={8}
+        dotSize={5}
+        spinDuration={6}
+        hoverDuration={0.25}
+      />
       <div aria-hidden="true" className="film-grain pointer-events-none fixed inset-0 z-[80] opacity-[0.05]" />
     </VideoProvider>
   )

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { TbArrowDown, TbPlayerPlayFilled } from 'react-icons/tb'
 import type { Portfolio } from '../../content/types'
-import { parseVideo } from '../../content/video'
+import { backgroundVideo } from '../../content/video'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { useScrollTo } from '../../hooks/useScrollTo'
 import { gsap, media, SplitText, useGSAP } from '../../lib/gsap'
@@ -27,14 +27,13 @@ export function Hero({ data, workId }: HeroProps) {
   const reduced = useMediaQuery(media.reduceMotion)
   const [videoReady, setVideoReady] = useState(false)
 
-  const reel = data.heroVideo ? parseVideo(data.heroVideo) : null
-  const backgroundSrc = reel && 'background' in reel && !reduced ? reel.background : null
+  const backgroundSrc = data.heroVideo && !reduced ? backgroundVideo(data.heroVideo, data.heroStart) : null
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
       mm.add(media.motionOK, () => {
-        const split = SplitText.create('[data-hero-name]', { type: 'chars', mask: 'chars' })
+        const split = SplitText.create('[data-hero-name]', { type: 'chars', mask: 'chars', charsClass: 'hero-char' })
         gsap
           .timeline({ delay: 0.1 })
           .from('[data-hero-media]', { scale: 1.18, autoAlpha: 0, duration: 2, ease: 'power2.out' }, 0)
@@ -55,6 +54,7 @@ export function Hero({ data, workId }: HeroProps) {
 
   return (
     <section ref={root} id="top" aria-label="Showreel" className="relative isolate flex h-svh min-h-[560px] items-end overflow-hidden">
+      {/* The video is zoomed past the screen edges so letterbox bars baked into widescreen films are cropped off. */}
       <div data-hero-zoom className="absolute inset-0 -z-10" aria-hidden="true">
         <div data-hero-media className="absolute inset-0 bg-elevated">
           {data.heroPoster && <img onError={hideOnError} src={data.heroPoster} alt="" className="absolute inset-0 size-full object-cover" />}
@@ -65,12 +65,12 @@ export function Hero({ data, workId }: HeroProps) {
               tabIndex={-1}
               allow="autoplay; encrypted-media"
               onLoad={() => window.setTimeout(() => setVideoReady(true), 1200)}
-              className={`pointer-events-none absolute top-1/2 left-1/2 h-[56.25vw] min-h-full w-[177.78svh] min-w-full -translate-x-1/2 -translate-y-1/2 border-0 transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
+              className={`pointer-events-none absolute top-1/2 left-1/2 h-[56.25vw] min-h-full w-[177.78svh] min-w-full -translate-x-1/2 -translate-y-1/2 scale-[1.35] border-0 transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
             />
           )}
         </div>
         <div data-hero-shade className="absolute inset-0 bg-bg opacity-30" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(12_12_11/0.55)_0%,transparent_30%,transparent_45%,rgb(12_12_11/0.92)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(12_12_11/0.85)_0%,rgb(12_12_11/0.35)_14%,transparent_32%,transparent_45%,rgb(12_12_11/0.92)_100%)]" />
       </div>
 
       <div data-hero-content className={`${container} pb-12 md:pb-16`}>

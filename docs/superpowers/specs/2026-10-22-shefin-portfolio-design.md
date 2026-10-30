@@ -14,8 +14,8 @@ without code. Blueprint: https://claude.ai/artifact/LPuum8ceBeFkn1FLg3Ut87
   services, about, heading & text, contact) that he can add, remove, reorder and retitle.
 - **Videos:** links only (YouTube, Vimeo, Instagram reels), detected from the URL. Instagram's player
   loads on click; reels need a cover image.
-- **Content before setup:** built-in samples (Lorem Picsum photos, Blender open movies, links to famous
-  photographers' Instagram profiles), clearly flagged on the page. New Portfolio documents start
+- **Content before setup:** built-in samples (Lorem Picsum photos, Blender open movies
+  ), clearly flagged on the page. New Portfolio documents start
   pre-filled with the sample text and links.
 - **Contact form:** no server; it composes an email in the visitor's mail app.
 - **Look:** dark and cinematic (#0c0c0b ground, warm #e0a458 accent), Instrument Serif headings with Inter for body text.

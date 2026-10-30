@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType, type UrlRule } from 'sanity'
 import { samplePortfolio } from '../content/sample'
-import { parseVideo } from '../content/video'
+import { isInstagramReel, parseVideo } from '../content/video'
 
 /* Field definitions for the /admin editor. Titles and descriptions are written for Shefin, not developers. */
 
@@ -104,10 +104,21 @@ const reels = defineType({
               name: 'url',
               title: 'Instagram link',
               type: 'url',
-              description: 'Paste the reel’s link (Share → Copy link). The account and reel must be public.',
+              description: 'Open the reel, tap Share → Copy link, and paste it here. The account and reel must be public.',
+              validation: (rule) =>
+                rule.required().custom((value: unknown) =>
+                  typeof value === 'string' && !isInstagramReel(value)
+                    ? 'This must be a link to one reel (it contains /reel/), not a profile link'
+                    : true,
+                ),
+            }),
+            defineField({
+              name: 'cover',
+              title: 'Cover image',
+              type: 'image',
+              description: 'Instagram doesn’t share reel thumbnails, so upload a still or screenshot from the reel.',
               validation: (rule) => rule.required(),
             }),
-            defineField({ name: 'cover', title: 'Cover image', type: 'image', description: 'A still from the reel. Shown until someone presses play.' }),
           ],
           preview: { select: { title: 'title', subtitle: 'url', media: 'cover' } },
         }),
@@ -207,6 +218,7 @@ const portfolio = defineType({
     role: samplePortfolio.role,
     statement: samplePortfolio.statement,
     heroVideo: samplePortfolio.heroVideo,
+    heroStart: samplePortfolio.heroStart,
     sections: initialSections,
   },
   fields: [
@@ -221,6 +233,14 @@ const portfolio = defineType({
       group: 'intro',
       description: 'YouTube or Vimeo link. It plays silently on a loop behind your name.',
       validation: videoLink,
+    }),
+    defineField({
+      name: 'heroStart',
+      title: 'Showreel start (seconds)',
+      type: 'number',
+      group: 'intro',
+      description: 'Skip an intro or title card: the background loop starts this many seconds in. Leave empty to start at the beginning.',
+      validation: (rule) => rule.min(0).integer(),
     }),
     defineField({ name: 'heroPoster', title: 'Showreel cover image', type: 'image', group: 'intro', description: 'Shown while the video loads, and instead of it for visitors who turn off animations.' }),
     defineField({

@@ -104,7 +104,7 @@ export function Films({ id, heading, intro, films }: FilmsProps) {
               <button
                 type="button"
                 data-film-inner
-                data-cursor="Play"
+                data-cursor-label="Play"
                 onClick={() => playVideo({ url: film.url, title: film.title })}
                 className="group block w-full text-left"
               >

@@ -5,8 +5,8 @@ change everything without touching code: photos, films, Instagram reels, service
 piece of text, and which sections appear (and in what order).
 
 Until the admin panel is connected, the site shows **sample content**: photos from Lorem Picsum,
-the Blender Foundation's freely licensed open movies as films, and links to well-known photographers'
-Instagram profiles as reels. A small "Sample photos & videos" notice shows while it does. None of it is
+and the Blender Foundation's freely licensed open movies as films. The Reels section appears once real reel
+links are added. A small "Sample photos & videos" notice shows while it does. None of it is
 Shefin's work; it disappears as soon as he publishes his own.
 
 ## Run it
@@ -48,8 +48,9 @@ stored on Sanity's free plan; login is with Google or email, handled by Sanity.
   *About*, *Heading & text*, *Contact*. Each has its own heading, intro line and menu label.
 - **Photos:** drag images in; each can have a category (becomes a filter button), caption and description.
   Sanity resizes them automatically, so full-size camera files are fine.
-- **Videos:** paste a YouTube, Vimeo or Instagram reel link; the site works out which it is. Instagram reels
-  must be public, and a cover image is recommended (Instagram doesn't provide one).
+- **Videos:** paste a YouTube or Vimeo link for films and the showreel (with an optional start time to skip
+  intros). Reels take a link to one public Instagram reel (not a profile) plus a cover image, since Instagram
+  doesn't provide one; they play inside the site, no Instagram login needed.
 - **Contact & social:** email, WhatsApp number, Instagram / YouTube / Vimeo links.
 
 ## Deploy
@@ -68,11 +69,11 @@ React + TypeScript + Tailwind CSS v4, built with Vite.
   runs through `useGSAP` with scoped refs and `gsap.matchMedia()` for reduced motion and screen size.
   - Hero: the name rises in letter by letter, and scrolling pushes into the silent showreel.
   - Films: pinned horizontal scroll on large screens, with cards settling in via `containerAnimation`.
-  - Also: reels slide in, the portrait drifts (parallax), the header hides while scrolling down, and a "View/Play" cursor follows the pointer.
+  - Also: reels slide in, the portrait drifts (parallax), the header hides while scrolling down, and a focus-frame cursor (React Bits **TargetCursor**) snaps around photos and films.
 - **React Bits** ([`src/components/reactbits/`](src/components/reactbits)), adapted to the site:
   **Masonry** (photo grid, hover zoom, lightbox, animated filtering), **SplitText** (section headings),
   **ScrollReveal** (intro sentence), **AnimatedContent** (services), **Magnet** (buttons) and
-  **StaggeredMenu** (mobile menu). React Bits is MIT + Commons Clause; its licence is in that folder.
+  **StaggeredMenu** (mobile menu) and **TargetCursor** (cursor). React Bits is MIT + Commons Clause; its licence is in that folder.
 
 Content flows through one shape ([`src/content/types.ts`](src/content/types.ts)): Sanity data is fetched
 with a single GROQ query ([`src/content/load.ts`](src/content/load.ts)) and falls back to the samples in

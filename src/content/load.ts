@@ -1,9 +1,10 @@
 import { samplePortfolio } from './sample'
+import { isInstagramReel } from './video'
 import { isSanityConfigured, PORTFOLIO_ID, sanityConfig } from './sanity'
 import type { Photo, Portfolio, Section } from './types'
 
 const QUERY = `*[_id == $id][0]{
-  name, role, location, statement, heroVideo, email, whatsapp, instagram, youtube, vimeo,
+  name, role, location, statement, heroVideo, heroStart, email, whatsapp, instagram, youtube, vimeo,
   "heroPoster": heroPoster.asset->url,
   sections[]{
     _key, _type, heading, navLabel, intro, body, bio, tools,
@@ -37,7 +38,7 @@ function normalise(raw: Raw): Portfolio {
       }
     }
     if (s._type === 'films') return { ...s, films: (s.films ?? []).filter((f) => f?.url), }
-    if (s._type === 'reels') return { ...s, reels: (s.reels ?? []).filter((r) => r?.url).map((r) => ({ ...r, cover: sized(r.cover, 720) })) }
+    if (s._type === 'reels') return { ...s, reels: (s.reels ?? []).filter((r) => r?.url && isInstagramReel(r.url)).map((r) => ({ ...r, cover: sized(r.cover, 720) })) }
     if (s._type === 'services') return { ...s, services: s.services ?? [] }
     if (s._type === 'about') return { ...s, portrait: sized(s.portrait, 1000), tools: s.tools ?? [] }
     return s
