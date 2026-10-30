@@ -33,7 +33,11 @@ stored on Sanity's free plan; login is with Google or email, handled by Sanity.
    address the site runs on, with **Allow credentials** ticked:
    `http://localhost:5173` and your live address (e.g. `https://shefin.vercel.app`).
 3. **Give the site the project ID.**
-   - Locally: copy `.env.example` to `.env` and fill in `VITE_SANITY_PROJECT_ID`.
+   - Locally: create a file named `.env` next to `package.json` containing
+     ```
+     VITE_SANITY_PROJECT_ID=your-project-id
+     VITE_SANITY_DATASET=production
+     ```
    - On Vercel: Project → **Settings → Environment Variables** → add `VITE_SANITY_PROJECT_ID`, then redeploy.
 4. **Invite Shefin.** In sanity.io/manage → **Members → Invite**, using his email, with the
    *Administrator* or *Editor* role.
