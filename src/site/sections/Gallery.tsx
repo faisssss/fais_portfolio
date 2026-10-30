@@ -71,7 +71,7 @@ export function Gallery({ id, heading, intro, photos }: GalleryProps) {
         )}
       </div>
 
-      <div data-cursor="View">
+      <div data-cursor-group="View">
         <Masonry
           items={items}
           columnWidth={340}

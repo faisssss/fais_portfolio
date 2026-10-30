@@ -68,3 +68,19 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* SplitText masks clip each word/letter while it rises in. Give them room below the baseline (and a hair
+   either side) so tails like g, y and p, and italic overhangs, aren't cut off; the negative margins keep the
+   text spacing unchanged. */
+.split-word-mask,
+.split-char-mask,
+.hero-char-mask {
+  padding: 0 0.04em 0.22em;
+  margin: 0 -0.04em -0.22em;
+}
+
+/* The custom cursor hides the system pointer, but it can't draw over the video player (a modal dialog). */
+dialog[open],
+dialog[open] * {
+  cursor: auto !important;
+}

@@ -8,7 +8,19 @@ export type VideoInfo =
 
 const YOUTUBE = /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/i
 const VIMEO = /vimeo\.com\/(?:video\/|channels\/[\w-]+\/|groups\/[\w-]+\/videos\/)?(\d+)/i
-const INSTAGRAM = /instagram\.com\/(?:[\w.]+\/)?(?:reel|reels|p|tv)\/([\w-]+)/i
+const INSTAGRAM = /instagram\.com\/(?:[\w.]+\/)?(reel|reels|p|tv)\/([\w-]+)/i
+
+/** True for a link to one specific Instagram reel/post (not a profile), which can play inside the site. */
+export const isInstagramReel = (url: string) => INSTAGRAM.test(url)
+
+/** Silent looping background version of a YouTube/Vimeo link, starting `start` seconds in. */
+export function backgroundVideo(url: string, start = 0): string | null {
+  const info = parseVideo(url)
+  if (!('background' in info)) return null
+  const from = Math.max(0, Math.floor(start))
+  if (!from) return info.background
+  return info.kind === 'youtube' ? `${info.background}&start=${from}` : `${info.background}#t=${from}s`
+}
 
 export function parseVideo(url: string): VideoInfo {
   const yt = url.match(YOUTUBE)
@@ -35,7 +47,8 @@ export function parseVideo(url: string): VideoInfo {
   }
   const ig = url.match(INSTAGRAM)
   if (ig) {
-    return { kind: 'instagram', id: ig[1], embed: `https://www.instagram.com/reel/${ig[1]}/embed` }
+    const id = ig[2]
+    return { kind: 'instagram', id, embed: `https://www.instagram.com/${/^p$/i.test(ig[1]) ? 'p' : 'reel'}/${id}/embed` }
   }
   return { kind: 'link', href: url }
 }

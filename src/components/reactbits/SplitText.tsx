@@ -436,8 +436,10 @@ const SplitText = ({
   );
 
   const Tag = tag || 'p';
+  // Adapted: with `mask`, each piece already clips itself (with room for descenders, see index.css), so the
+  // whole heading must not clip as well — that cut off the tails of g, y and p.
   const clip =
-    hoverEffect === 'none' && (from !== undefined || to !== undefined || effect === 'rise' || effect === 'fade');
+    !mask && hoverEffect === 'none' && (from !== undefined || to !== undefined || effect === 'rise' || effect === 'fade');
 
   return (
     <Tag

@@ -1,9 +1,10 @@
 import { samplePortfolio } from './sample'
+import { isInstagramReel } from './video'
 import { isSanityConfigured, PORTFOLIO_ID, sanityConfig } from './sanity'
 import type { Photo, Portfolio, Section } from './types'
 
 const QUERY = `*[_id == $id][0]{
-  name, role, location, statement, heroVideo, email, whatsapp, instagram, youtube, vimeo,
+  name, role, location, statement, heroVideo, heroStart, email, whatsapp, instagram, youtube, vimeo,
   "heroPoster": heroPoster.asset->url,
   sections[]{
     _key, _type, heading, navLabel, intro, body, bio, tools,
@@ -37,7 +38,7 @@ function normalise(raw: Raw): Portfolio {
       }
     }
     if (s._type === 'films') return { ...s, films: (s.films ?? []).filter((f) => f?.url), }
-    if (s._type === 'reels') return { ...s, reels: (s.reels ?? []).filter((r) => r?.url).map((r) => ({ ...r, cover: sized(r.cover, 720) })) }
+    if (s._type === 'reels') return { ...s, reels: (s.reels ?? []).filter((r) => r?.url && isInstagramReel(r.url)).map((r) => ({ ...r, cover: sized(r.cover, 720) })) }
     if (s._type === 'services') return { ...s, services: s.services ?? [] }
     if (s._type === 'about') return { ...s, portrait: sized(s.portrait, 1000), tools: s.tools ?? [] }
     return s
@@ -53,9 +54,10 @@ export async function loadPortfolio(): Promise<Portfolio> {
   if (!isSanityConfigured()) return samplePortfolio
   try {
     // Sanity's read API over plain fetch (the full client library would add ~80 KB to the public site).
+    // The live API (not the apicdn cache) so a Publish shows up on the next refresh, every time.
     const { projectId, dataset, apiVersion } = sanityConfig
     const params = new URLSearchParams({ query: QUERY, $id: JSON.stringify(PORTFOLIO_ID), perspective: 'published' })
-    const response = await fetch(`https://${projectId}.apicdn.sanity.io/v${apiVersion}/data/query/${dataset}?${params}`)
+    const response = await fetch(`https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?${params}`, { cache: 'no-store' })
     if (!response.ok) throw new Error(`Sanity responded ${response.status}`)
     const raw = ((await response.json()) as { result: Raw | null }).result
     if (!raw?.name) return samplePortfolio

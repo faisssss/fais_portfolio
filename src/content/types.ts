@@ -52,6 +52,8 @@ export interface Portfolio {
   location?: string
   statement?: string
   heroVideo?: string
+  /** Seconds into the showreel where the silent background loop starts (skips intros and credits). */
+  heroStart?: number
   heroPoster?: string
   email?: string
   whatsapp?: string
